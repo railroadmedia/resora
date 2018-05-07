@@ -2,6 +2,8 @@
 
 namespace Railroad\Resora;
 
+use Illuminate\Support\ServiceProvider;
+
 class ResoraServiceProvider extends ServiceProvider
 {
     /**
@@ -11,9 +13,6 @@ class ResoraServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        parent::boot();
-
-        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
         $this->publishes(
             [
                 __DIR__ . '/../config/resora.php' => config_path('resora.php'),
