@@ -36,6 +36,7 @@ class RepositoryBase
 
         $realConfig['name'] = 'resora_connection_mask_' . $realConfig['name'];
 
+        // todo: stop this from making a new PDO connection
         $maskConnection =
             new Connection(
                 $realConnection->getPdo(),
@@ -63,6 +64,14 @@ class RepositoryBase
         $this->query = $this->newQuery();
 
         return $this;
+    }
+
+    /**
+     * @return BaseQuery
+     */
+    public function getCurrentQuery()
+    {
+        return $this->query;
     }
 
     public function __call($name, $arguments)

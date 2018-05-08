@@ -10,7 +10,7 @@ use Illuminate\Database\Query\Processors\Processor;
 class BaseQuery extends Builder
 {
     protected $identifierColumnName = 'id';
-    protected $table = 'table';
+    protected $table = 'resora';
 
     public function __construct(ConnectionInterface $connection, Grammar $grammar = null, Processor $processor = null)
     {

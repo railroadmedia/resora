@@ -2,6 +2,8 @@
 
 namespace Railroad\Resora\Decorators;
 
+use Railroad\Resora\Collections\BaseCollection;
+
 class Decorator
 {
     /**
@@ -12,7 +14,7 @@ class Decorator
      */
     public static function decorate($data, $type, $decoratorClass = null)
     {
-        if (!is_array($data)) {
+        if (!is_array($data) && !($data instanceof BaseCollection)) {
             return $data;
         }
 

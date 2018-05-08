@@ -27,6 +27,17 @@ class TestCase extends BaseTestCase
         $this->databaseManager = $this->app->make(DatabaseManager::class);
 
         Carbon::setTestNow(Carbon::now());
+
+        $this->databaseManager->connection(config('resora.default_connection_name'))
+            ->statement("CREATE TABLE `resora` (`id` int(10));");
+    }
+
+    protected function tearDown()
+    {
+        $this->databaseManager->connection(config('resora.default_connection_name'))
+            ->statement("DROP TABLE `resora`;");
+
+        parent::tearDown();
     }
 
     /**
