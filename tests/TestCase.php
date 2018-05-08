@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests;
+namespace Railroad\Resora\Tests;
 
 use Carbon\Carbon;
 use Faker\Generator;
 use Illuminate\Database\DatabaseManager;
 use Orchestra\Testbench\TestCase as BaseTestCase;
-use Railroad\Resora\ResoraServiceProvider;
+use Railroad\Resora\Providers\ResoraServiceProvider;
 
 class TestCase extends BaseTestCase
 {
@@ -37,6 +37,12 @@ class TestCase extends BaseTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
+        $defaultConfig = require(__DIR__ . '/../config/resora.php');
+
+        foreach ($defaultConfig as $key => $value) {
+            config()->set('resora.' . $key, $value);
+        }
+
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set(

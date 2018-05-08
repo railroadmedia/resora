@@ -1,7 +1,11 @@
 <?php
 
 return [
-    'my-settings' => [
-        'setting-1' => true,
+    'decorators' => [
+        'all' => [
+            \Railroad\Resora\Decorators\Entity\EntityDecorator::class,
+        ],
     ],
+
+    'default_connection_name' => 'testbench'
 ];
