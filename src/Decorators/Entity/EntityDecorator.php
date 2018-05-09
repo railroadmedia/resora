@@ -10,7 +10,9 @@ class EntityDecorator implements DecoratorInterface
     public function decorate($results)
     {
         foreach ($results as $resultsIndex => $result) {
-            $results[$resultsIndex] = new Entity($result);
+            if (!($result instanceof Entity)) {
+                $results[$resultsIndex] = new Entity((array) $result);
+            }
         }
 
         return $results;

@@ -2,10 +2,11 @@
 
 return [
     'decorators' => [
-        'all' => [
-            \Railroad\Resora\Decorators\Entity\EntityDecorator::class,
-        ],
     ],
 
-    'default_connection_name' => 'testbench'
+    'default_connection_name' => 'testbench',
+    'default_cache_driver' => 'array',
+
+    'cache_key_prefix' => 'content_cache_',
+    'cache_minutes' => 60,
 ];

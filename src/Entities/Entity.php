@@ -20,4 +20,9 @@ class Entity extends ArrayObject
     {
         $this->exchangeArray($data);
     }
+
+    public function __get($name)
+    {
+        return $this[$name] ?? null;
+    }
 }

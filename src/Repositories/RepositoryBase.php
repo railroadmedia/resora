@@ -2,59 +2,19 @@
 
 namespace Railroad\Resora\Repositories;
 
-use Illuminate\Database\Connection;
 use Railroad\Resora\Collections\BaseCollection;
 use Railroad\Resora\Decorators\Decorator;
 use Railroad\Resora\Queries\BaseQuery;
+use Railroad\Resora\Repositories\Traits\CreateReadUpdateDestroy;
 
 class RepositoryBase
 {
+    use CreateReadUpdateDestroy;
+
     /**
      * @var BaseQuery
      */
     protected $query;
-
-    /**
-     * @var string
-     */
-    protected $connectionName;
-
-    /**
-     * @return BaseQuery|$this
-     */
-    protected function newQuery()
-    {
-        if (empty($this->connectionName)) {
-            $this->connectionName = config('resora.default_connection_name');
-        }
-
-        /**
-         * @var $realConnection Connection
-         */
-        $realConnection = app('db')->connection($this->connectionName);
-        $realConfig = $realConnection->getConfig();
-
-        $realConfig['name'] = 'resora_connection_mask_' . $realConfig['name'];
-
-        // todo: stop this from making a new PDO connection
-        $maskConnection =
-            new Connection(
-                $realConnection->getPdo(),
-                $realConnection->getDatabaseName(),
-                $realConnection->getTablePrefix(),
-                $realConfig
-            );
-
-        if (!empty($realConnection->getSchemaGrammar())) {
-            $maskConnection->setSchemaGrammar($realConnection->getSchemaGrammar());
-        }
-
-        $maskConnection->setQueryGrammar($realConnection->getQueryGrammar());
-        $maskConnection->setEventDispatcher($realConnection->getEventDispatcher());
-        $maskConnection->setPostProcessor($realConnection->getPostProcessor());
-
-        return new BaseQuery($maskConnection);
-    }
 
     /**
      * @return BaseQuery|$this
@@ -74,6 +34,32 @@ class RepositoryBase
         return $this->query;
     }
 
+    /**
+     * @return BaseQuery
+     */
+    public function continueOrNewQuery()
+    {
+        return $this->query ?? $this->query();
+    }
+
+    /**
+     * @return BaseQuery|$this
+     */
+    protected function newQuery()
+    {
+        return new BaseQuery($this->connection());
+    }
+
+    protected function connection()
+    {
+        return app('db')->connection(config('resora.default_connection_name'));
+    }
+
+    protected function decorate($results)
+    {
+        return Decorator::decorate($results, 'all');
+    }
+
     public function __call($name, $arguments)
     {
         $results = call_user_func_array([$this->query, $name], $arguments);
@@ -82,10 +68,12 @@ class RepositoryBase
             return $this;
         }
 
+        $this->query = null;
+
         if ($results instanceof \Illuminate\Support\Collection) {
             $results = new BaseCollection($results);
         }
 
-        return Decorator::decorate($results, 'all');
+        return $this->decorate($results);
     }
 }

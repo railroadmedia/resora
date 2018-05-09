@@ -33,7 +33,7 @@ class RepositoryBaseTest extends TestCase
 
     public function test_query_building()
     {
-        $rawQuery = $this->repositoryBase->query()->where('id', 1)->getCurrentQuery();
+        $rawQuery = $this->repositoryBase->query()->from('resora')->where('id', 1)->getCurrentQuery();
 
         $this->assertEquals(
             [
@@ -49,26 +49,27 @@ class RepositoryBaseTest extends TestCase
         );
     }
 
-    public function test_results_pipe()
+    public function test_results_pipe_single()
     {
         $this->databaseManager->table('resora')->insertGetId(['id' => 1]);
 
-        $results = $this->repositoryBase->query()->where('id', 1)->get();
+        $results = $this->repositoryBase->query()->from('resora')->read(1);
 
         $this->assertEquals(
-            new BaseCollection([['id' => 1]]),
+            new Entity(['id' => 1]),
             $results
         );
     }
 
-    public function test_results_get_decorated()
+    public function test_results_pipe_multiple()
     {
         $this->databaseManager->table('resora')->insertGetId(['id' => 1]);
+        $this->databaseManager->table('resora')->insertGetId(['id' => 2]);
 
-        $results = $this->repositoryBase->query()->where('id', 1)->get();
+        $results = $this->repositoryBase->query()->from('resora')->whereIn('id', [1, 2])->get();
 
         $this->assertEquals(
-            new BaseCollection([new Entity(['id' => 1])]),
+            new BaseCollection([new Entity(['id' => 1]), new Entity(['id' => 2])]),
             $results
         );
     }

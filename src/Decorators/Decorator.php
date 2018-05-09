@@ -3,6 +3,7 @@
 namespace Railroad\Resora\Decorators;
 
 use Railroad\Resora\Collections\BaseCollection;
+use Railroad\Resora\Decorators\Entity\EntityDecorator;
 
 class Decorator
 {
@@ -14,31 +15,32 @@ class Decorator
      */
     public static function decorate($data, $type, $decoratorClass = null)
     {
-        if (!is_array($data) && !($data instanceof BaseCollection)) {
+        if (!is_object($data) && !($data instanceof BaseCollection)) {
             return $data;
         }
 
-        if (!empty(config('resora.decorators')) || !empty($decoratorClass)) {
+        if (empty($decoratorClass)) {
+            $decoratorClassNames = config('resora.decorators')[$type] ?? [];
+        } else {
+            $decoratorClassNames = [$decoratorClass];
+        }
 
-            if (empty($decoratorClass)) {
-                $decoratorClassNames = config('resora.decorators')[$type] ?? [];
+        // we always want to convert the results to entities
+        $decoratorClassNames = array_merge([EntityDecorator::class,], $decoratorClassNames);
+
+
+        foreach ($decoratorClassNames as $decoratorClassName) {
+            /**
+             * @var $decorator DecoratorInterface
+             */
+            $decorator = app()->make($decoratorClassName);
+
+            if (!($data instanceof BaseCollection)) {
+                // singular content
+                $data = $decorator->decorate(new BaseCollection([0 => $data]))[0];
             } else {
-                $decoratorClassNames = [$decoratorClass];
-            }
-
-            foreach ($decoratorClassNames as $decoratorClassName) {
-                /**
-                 * @var $decorator DecoratorInterface
-                 */
-                $decorator = app()->make($decoratorClassName);
-
-                if (isset($data['id'])) {
-                    // singular content
-                    $data = $decorator->decorate([0 => $data])[0];
-                } else {
-                    // multiple contents
-                    $data = $decorator->decorate($data);
-                }
+                // multiple contents
+                $data = $decorator->decorate($data);
             }
         }
 

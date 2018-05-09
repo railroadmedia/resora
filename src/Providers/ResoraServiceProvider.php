@@ -21,16 +21,6 @@ class ResoraServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/resora.php' => config_path('resora.php'),
             ]
         );
-
-        // return all results as assoc array for all resora database calls
-        Event::listen(
-            StatementPrepared::class,
-            function (StatementPrepared $event) {
-                if (strpos($event->connection->getName(), 'resora_connection_mask_') !== false) {
-                    $event->statement->setFetchMode(PDO::FETCH_ASSOC);
-                }
-            }
-        );
     }
 
     /**
