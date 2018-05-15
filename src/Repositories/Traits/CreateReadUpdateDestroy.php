@@ -34,7 +34,9 @@ trait CreateReadUpdateDestroy
     {
         $this->continueOrNewQuery();
 
-        $this->query->where('id', $id)->update($attributes);
+        if (!empty($attributes)) {
+            $this->query->where('id', $id)->update($attributes);
+        }
 
         return $this->read($id);
     }
