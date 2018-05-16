@@ -26,16 +26,21 @@ trait CreateReadUpdateDestroy
     }
 
     /**
-     * @param $id
-     * @param $attributes
-     * @return Entity|null
+     * If id is passed as number, we update a single row based on that id.
+     * If the id param is an array, we pass it along to the query update method.
+     *
+     * @param $id|array
+     * @param $attributes = null
+     * @return int|Entity|null
      */
-    public function update($id, $attributes)
+    public function update($id, $attributes = null)
     {
         $this->continueOrNewQuery();
 
-        if (!empty($attributes)) {
+        if (!empty($attributes) && !is_array($id)) {
             $this->query->where('id', $id)->update($attributes);
+        } else {
+            return $this->query->update($id);
         }
 
         return $this->read($id);
