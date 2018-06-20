@@ -18,7 +18,7 @@ class ResoraServiceProvider extends ServiceProvider
     {
         $this->publishes(
             [
-                __DIR__ . '/../config/resora.php' => config_path('resora.php'),
+                __DIR__ . '/../../config/resora.php' => config_path('resora.php'),
             ]
         );
     }
