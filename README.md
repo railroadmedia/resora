@@ -1,7 +1,7 @@
 # Resora
 ## Compatibility
 
-- 1.0.* - Laravel version 5.6.*
+- 1.0.* -> Laravel version 5.6.*
 
 ## Methodology Flow Chart
 [https://github.com/railroadmedia/resora/blob/master/documentation/flow-charts/data-flow-methodology.jpg](https://github.com/railroadmedia/resora/blob/master/documentation/flow-charts/data-flow-methodology.jpg)
