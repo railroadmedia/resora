@@ -13,7 +13,7 @@ trait CreateReadUpdateDestroy
      */
     public function create($attributes)
     {
-        return $this->read($this->continueOrNewQuery()->insertGetId($attributes));
+        return $this->read($this->query()->insertGetId($attributes));
     }
 
     /**
@@ -22,7 +22,7 @@ trait CreateReadUpdateDestroy
      */
     public function read($id)
     {
-        return $this->continueOrNewQuery()->where('id', $id)->first();
+        return $this->query()->where('id', $id)->first();
     }
 
     /**
@@ -43,16 +43,6 @@ trait CreateReadUpdateDestroy
             return $this->query->update($id);
         }
 
-        /*
-        Temporary fix
-        if the $this->query is of type Railroad\Resora\Queries\CachedQuery
-        the $this->read() method above will by-pass the Railroad\Resora\Repositories\__call method
-        and decorators will not be executed
-
-        checked for not creating a second connection to database
-        */
-        $this->query = null;
-
         return $this->read($id);
     }
 
@@ -70,16 +60,6 @@ trait CreateReadUpdateDestroy
         } else {
             return $this->create(array_merge($attributes, $values));
         }
-
-        /*
-        Temporary fix
-        if the $this->query is of type Railroad\Resora\Queries\CachedQuery
-        the $this->read() method above will by-pass the Railroad\Resora\Repositories\__call method
-        and decorators will not be executed
-
-        checked for not creating a second connection to database
-        */
-        $this->query = null;
 
         return $this->read($existing['id']);
     }
