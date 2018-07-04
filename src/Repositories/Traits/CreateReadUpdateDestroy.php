@@ -70,6 +70,9 @@ trait CreateReadUpdateDestroy
      */
     public function destroy($id)
     {
-        return $this->continueOrNewQuery()->where('id', $id)->delete() == 1;
+        return $this
+            ->query()
+            ->continueOrNewQuery()
+            ->where('id', $id)->delete() == 1;
     }
 }
