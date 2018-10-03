@@ -55,7 +55,7 @@ trait CreateReadUpdateDestroy
     {
         $existing = $this->query()->where($attributes)->first();
 
-        if (!empty($existing)) {
+        if (!empty($existing) && !empty($values)) {
             $this->update($existing['id'], $values);
         } else {
             return $this->create(array_merge($attributes, $values));
