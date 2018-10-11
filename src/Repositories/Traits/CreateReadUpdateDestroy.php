@@ -4,6 +4,13 @@ namespace Railroad\Resora\Repositories\Traits;
 
 use Railroad\Resora\Decorators\Decorator;
 use Railroad\Resora\Entities\Entity;
+use Railroad\Resora\Events\Created;
+use Railroad\Resora\Events\Creating;
+use Railroad\Resora\Events\Destroyed;
+use Railroad\Resora\Events\Destroying;
+use Railroad\Resora\Events\Read;
+use Railroad\Resora\Events\Updated;
+use Railroad\Resora\Events\Updating;
 
 trait CreateReadUpdateDestroy
 {
@@ -13,7 +20,15 @@ trait CreateReadUpdateDestroy
      */
     public function create($attributes)
     {
-        return $this->read($this->query()->insertGetId($attributes));
+        event(new Creating(get_class($this), $attributes));
+
+        $entity = $this->read($this->query()->insertGetId($attributes));
+
+        if (!empty($entity)) {
+            event(new Created(get_class($this), $attributes, $entity));
+        }
+
+        return $entity;
     }
 
     /**
@@ -22,7 +37,13 @@ trait CreateReadUpdateDestroy
      */
     public function read($id)
     {
-        return $this->query()->where('id', $id)->first();
+        $entity = $this->query()->where('id', $id)->first();
+
+        if (!empty($entity)) {
+            event(new Read(get_class($this), $id, $entity));
+        }
+
+        return $entity;
     }
 
     /**
@@ -38,12 +59,18 @@ trait CreateReadUpdateDestroy
         $this->continueOrNewQuery();
 
         if (!empty($attributes) && !is_array($id)) {
+            event(new Updating(get_class($this), $id, $attributes));
+
             $this->query->where('id', $id)->update($attributes);
         } else {
             return $this->query->update($id);
         }
 
-        return $this->read($id);
+        $entity = $this->read($id);
+
+        event(new Updated(get_class($this), $id, $attributes, $entity));
+
+        return $entity;
     }
 
     /**
@@ -72,9 +99,17 @@ trait CreateReadUpdateDestroy
      */
     public function destroy($id)
     {
-        return $this
+        event(new Destroying(get_class($this), $id));
+
+        $bool = $this
             ->query()
             ->continueOrNewQuery()
             ->where('id', $id)->delete() == 1;
+
+        if ($bool) {
+            event(new Destroyed(get_class($this), $id));
+        }
+
+        return $bool;
     }
 }
