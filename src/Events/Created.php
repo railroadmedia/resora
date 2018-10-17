@@ -9,7 +9,7 @@ class Created
     /**
      * @var string
      */
-    private $class;
+    public $class;
 
     /**
      * @var array
