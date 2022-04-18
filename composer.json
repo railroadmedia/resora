@@ -34,10 +34,5 @@
     "psr-4": {
       "Railroad\\Resora\\Tests\\": "tests/"
     }
-  },
-  "config": {
-    "allow-plugins": {
-      "kylekatarnls/update-helper": true
-    }
   }
 }
