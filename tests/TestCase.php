@@ -4,6 +4,7 @@ namespace Railroad\Resora\Tests;
 
 use Carbon\Carbon;
 use Faker\Generator;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\DatabaseManager;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Railroad\Resora\Providers\ResoraServiceProvider;
@@ -19,7 +20,7 @@ class TestCase extends BaseTestCase
      */
     protected $databaseManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +33,7 @@ class TestCase extends BaseTestCase
             ->statement("CREATE TABLE `resora` (`id` int(10));");
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->databaseManager->connection(config('resora.default_connection_name'))
             ->statement("DROP TABLE `resora`;");

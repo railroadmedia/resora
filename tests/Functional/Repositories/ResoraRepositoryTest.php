@@ -9,14 +9,14 @@ use Railroad\Resora\Repositories\RepositoryBase;
 use Railroad\Resora\Tests\TestCase;
 use Railroad\Resora\Tests\Resources\Models\ResoraRepository;
 
-class RepositoryBaseTest extends TestCase
+class ResoraRepositoryTest extends TestCase
 {
     /**
      * @var RepositoryBase
      */
     protected $resoraRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
